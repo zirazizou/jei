@@ -68,4 +68,11 @@ class AdvertRepository extends \Doctrine\ORM\EntityRepository
 
         return $qr->getQuery()->getResult();
     }
+
+    public function getAdvert(){
+        $qr = $this->createQueryBuilder('a')
+            ->orderBy('a.date','DESC');
+
+        return $qr->getQuery()->getResult();
+    }
 }
