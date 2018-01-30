@@ -1,0 +1,31 @@
+zma_forum_homepage:
+    path:     /
+    defaults:
+        _controller: ZMAForumBundle:Post:index
+        page: 1
+    requirements:
+        page: \d*
+
+zma_forum_view:
+    path: /post/{id}.{_format}
+    defaults:
+        _controller: ZMAForumBundle:Post:view
+        _format: html
+    requirements:
+        id: \d+
+
+zma_forum_add:
+    path: /post/add
+    defaults : { _controller: ZMAForumBundle:Post:add}
+
+zma_forum_edit:
+   path: /post/edit/{id}
+   defaults: { _controller: ZMAForumBundle:Post:edit}
+   requirements:
+       id: \d*
+
+zma_forum_delete:
+   path: /post/delete/{id}
+   defaults: {_controller: ZMAForumBundle:Post:delete}
+   requirements:
+       id: \d+

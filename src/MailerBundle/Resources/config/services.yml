@@ -1,0 +1,6 @@
+services:
+#    mailer.example:
+#        class: MailerBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
+    mailersender:
+        class: MailerBundle\Classes\MailerSender

@@ -1,0 +1,20 @@
+Mon CV (développeur web, intégrateur XHTML/CSS & sites dynamiques)
+Mon domaine de compétences comprend : la création/maintenance/reprise de sites internet (développement web), avec multitude de tache dans l’intégration HTML/CSS sur mesure,
+ l’accessibilité, le développement front-end, la qualité web et le responsive.
+Informations personnelles :
+Nom : Ziraoui
+Prénom : mohamed amine
+Âge : 28 ans.
+diplômes :
+
+2014 : obtention du diplome du STEGS informatique appliquee a la gestion.
+
+Compétences :
+front-end: XHTML/HTML5/CSS  - JavaScript/DOM/JQuery - Ajax - XML - SVG (notions)
+Langages : PHP/mysql (debutant avancee) - SQL - Java (debutant) - habitude des contraintes techniques de référencement (SEO) et d’optimisation qualité - Accessibilité des sites Web
+Bonne pratique: Patrons de conception (notions)
+Conception et traitement de l’image : Photoshop - Illustrator (notions)
+Expérience professionnelle actuelle :
+septembre 2016 - juin 2017 employé par la société IBS en tant que développeur/intégrateur web :
+Sites en responsive administrables avec gestion de contenu sur mesure/CMS (PHP/MySQL, cakePHP, HTML5/CSS3 , JavaScript, jQuery, media-queries)
+conception et integration de chart grafique

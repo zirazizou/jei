@@ -1,0 +1,61 @@
+{# src/OC/PlatformBundle/Resources/view/Advert/view.html.twig #}
+
+{% extends "OCPlatformBundle::layout.html.twig" %}
+
+{% block title %}
+    Lecture d'une annonce - {{ parent() }}
+{% endblock %}
+
+{% block ocplatform_body %}
+
+
+
+    {% if advert.image is not null %}
+        <div style="height: 100%;">
+            <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}" height="100%;" width="200px" style="padding-right:10px;width-max:200px; ">
+        </div>
+    {% endif %}
+    <div style="margin-left:5px; height: 100%;">
+        <h2>{{ advert.titre }}</h2>
+        <i>Par {{ advert.author }}, le {{ advert.date|date('d/m/Y') }}</i>
+    </div>
+    <div class="well">
+
+        <div style="display: inline-block;margin-left:5px; ">
+            {{ advert.content }}
+        </div>
+        {% if listAdvertSkill | length > 0 %}
+            <div>
+                Cette annonces require les competences suivantes:
+                    <ul>
+                    {% for  value in listAdvertSkill %}
+                        <li>{{ value.skill.name }} : niveau {{ value.level }}</li>
+                    {% endfor %}
+                    </ul>
+            </div>
+        {% endif %}
+    </div>
+    {% if not advert.categories.empty %}
+        <p>
+            Cette annonce est apparue dans les category suivante:
+            {% for category in advert.categories %}
+                {{ category.name }}{% if not loop.last %} , {% endif %}
+            {% endfor %}
+        </p>
+    {% endif %}
+    <p>
+        <a href="{{ path('oc_platform_home') }}" class="btn btn-default">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            Retour à la liste
+        </a>
+        <a href="{{ path('oc_platform_edit', {'id': advert.id}) }}" class="btn btn-default">
+            <i class="glyphicon glyphicon-edit"></i>
+            Modifier l'annonce
+        </a>
+        <a href="{{ path('oc_platform_delete', {'id': advert.id}) }}" class="btn btn-danger">
+            <i class="glyphicon glyphicon-trash"></i>
+            Supprimer l'annonce
+        </a>
+    </p>
+
+{% endblock %}

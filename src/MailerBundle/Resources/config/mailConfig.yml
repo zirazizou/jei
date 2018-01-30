@@ -1,0 +1,8 @@
+Mailer:
+    client:
+        object: 'objet client'
+        body: 'body client'
+        event_date: '1990-8-1'
+    fournisseur:
+        object: 'objet fournisseur'
+        body: 'body fournisseur'

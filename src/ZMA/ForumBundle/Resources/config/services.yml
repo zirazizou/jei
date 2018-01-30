@@ -1,0 +1,4 @@
+services:
+#    zma_forum.example:
+#        class: ZMA\ForumBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

@@ -1,0 +1,3 @@
+bridge_homepage:
+    path:     /
+    defaults: { _controller: BridgeBundle:Default:index }

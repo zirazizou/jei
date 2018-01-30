@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% for messages in app.flashes(['notice']) %}
+        {% for message in messages %}
+            <div class="alert alert-notice">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    Hello world ! {{ id }}
+
+</body>
+</html>
