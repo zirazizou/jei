@@ -64,16 +64,20 @@ class AdvertController extends Controller
         ));
     }
 
-    public function menuAction()
+    public function menuAction($limits)
     {
         // On fixe en dur une liste ici, bien entendu par la suite
         // on la récupérera depuis la BDD !
-        $listAdverts = array(
-            array('id' => 2, 'title' => 'Recherche développeur Symfony'),
-            array('id' => 5, 'title' => 'Mission de webmaster'),
-            array('id' => 9, 'title' => 'Offre de stage webdesigner')
-        );
 
+        $em = $this->getDoctrine()->getManager();
+
+        $listAdverts = $em->getRepository("OCPlatformBundle:Advert")
+            ->findBy(
+                array(),
+                array('date'=>'desc'),
+                $limits,
+                0
+            );
         return $this->render('OCPlatformBundle:Advert:menu.html.twig', array(
             // Tout l'intérêt est ici : le contrôleur passe
             // les variables nécessaires au template !
@@ -93,110 +97,50 @@ class AdvertController extends Controller
             // Puis on redirige vers la page de visualisation de cettte annonce
             return $this->redirectToRoute('oc_platform_view', array('id' => 5));
         }
-        $em = $this->getDoctrine()->getManager();
-//        $listAdverts = array(
-//            array(
-//                'title'   => 'Recherche développpeur Symfony',
-//                'author'  => 'Alexandre',
-//                'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
-//                'date'    => new \Datetime()),
-//            array(
-//                'title'   => 'Mission de webmaster',
-//                'author'  => 'Hugo',
-//                'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
-//                'date'    => new \Datetime()),
-//            array(
-//                'title'   => 'Offre de stage webdesigner',
-//                'author'  => 'Mathieu',
-//                'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
-//                'date'    => new \Datetime())
-//        );
-//        $em = $this->getDoctrine()->getManager();
-//
-//        foreach($listAdverts as $array){
-//            $advert = new Advert();
-//            $advert->setTitre($array['title']);
-//            $advert->setContent($array['content']);
-//            $advert->setDate($array['date']);
-//            $advert->setPublished(true);
-//            $advert->setAuthor($array['author']);
-//            $em->persist($advert);
-//        }
-//        $em->flush();
-        // Si on n'est pas en POST, alors on affiche le formulaire
-
-        $advert = new Advert();
-        $advert->setTitre("Annonce developper doctrine events 2 ");
-        $advert->setContent("Nous recherchons un développeur Angular 4 débutant sur Lyon.");
-        $advert->setAuthor("Alexandre");
-        $advert->setPublished(true);
-
-        $allSkills = $em->getRepository("OCPlatformBundle:Skill")->findAll();
-
-        $image = new Image();
-        $image->setUrl("https://cdn.worldvectorlogo.com/logos/angular-3.svg");
-        $image->setAlt("angular 4");
-        $advert->setImage($image);
-
-        foreach ($allSkills as $skill){
-            $advertSkill = new AdvertSkill();
-            $advertSkill->setAdvert($advert);
-            $advertSkill->setSkill($skill);
-            $advertSkill->setLevel("Expert");
-            $em->persist($advertSkill);
-        }
-
-        $categories = $this->getDoctrine()
-            ->getManager()
-            ->getRepository("OCPlatformBundle:Category")
-            ->findAll();
-
-        foreach ($categories as $category){
-            $advert->addCategory($category);
-        }
-
-
-
-        $application1 = new Application();
-        $application1->setAuthor('Marine');
-        $application1->setContent("J'ai toutes les qualités requises. j'ai les capacitees necessaire.");
-
-        // Création d'une deuxième candidature par exemple
-        $application2 = new Application();
-        $application2->setAuthor('Pierre');
-        $application2->setContent("Je suis très motivé.");
-
-        $application1->setAdvert($advert);
-        $application2->setAdvert($advert);
-        $em->persist($application1);
-        $em->persist($image);
-        $em->persist($application2);
-        $em->persist($advert);
-        $em->flush();
 
         return $this->render('OCPlatformBundle:Advert:add.html.twig');
     }
 
     public function editAction($id, Request $request)
     {
-        // Ici, on récupérera l'annonce correspondante à $id
+        $em = $this->getDoctrine()->getManager();
 
-        // Même mécanisme que pour l'ajout
+        $advert = $em->getRepository("OCPlatformBundle:Advert")
+            ->find($id);
+
+        if( Null === $advert){
+            throw new NotFoundHttpException("not advert found");
+        }
+
         if ($request->isMethod('POST')) {
             $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
 
             return $this->redirectToRoute('oc_platform_view', array('id' => 5));
         }
 
-        return $this->render('OCPlatformBundle:Advert:edit.html.twig');
+        return $this->render('OCPlatformBundle:Advert:edit.html.twig',array(
+            "advert" => $advert
+        ));
     }
 
     public function deleteAction($id)
     {
-        // Ici, on récupérera l'annonce correspondant à $id
+        $em = $this->getDoctrine()->getManager();
 
-        // Ici, on gérera la suppression de l'annonce en question
+        $advert = $em->getRepository('OCPlatformBundle:Advert')
+            ->find($id);
+
+        if( Null === $advert){
+            throw new NotFoundHttpException("not advert found");
+        }
+
+        foreach($advert->getCategories() as $value){
+            $advert->removeCategory($value);
+        }
+        $em->remove($advert);
+        $em->flush();
 
         return $this->render('OCPlatformBundle:Advert:delete.html.twig');
     }
+
 }
