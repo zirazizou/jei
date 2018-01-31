@@ -2,6 +2,7 @@
 
 namespace OC\PlatformBundle\Repository;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * AdvertRepository
@@ -19,6 +20,23 @@ class AdvertRepository extends \Doctrine\ORM\EntityRepository
 
         return $query->getQuery()->getResult();
     }
+
+    public function getAdverts($page, $nbPerPage ){
+
+        $qr = $this->createQueryBuilder('a')
+            ->leftJoin('a.image','i')
+            ->addSelect('i')
+            ->leftJoin('a.categories','c')
+            ->addSelect('c')
+            ->orderBy('a.date','desc')
+            ->getQuery();
+
+        $qr->setFirstResult(($page - 1) * $nbPerPage)
+            ->setMaxResults($nbPerPage);
+
+        return new Paginator($qr, true);
+    }
+
 
     public function findByAuthorAndDate($author, $year){
         $qr = $this->createQueryBuilder('a');
@@ -42,7 +60,7 @@ class AdvertRepository extends \Doctrine\ORM\EntityRepository
 
         $qr = $this->createQueryBuilder('a');
 
-        $qr->where("a.author = : author")
+        $qr->where("a.author = :v author")
             ->setParameter("author", $author);
         $this->whereCurrentYear($qr);
         $qr->orderBy("a.date", "DESC");

@@ -31,11 +31,16 @@ class AdvertController extends Controller
         // Mais pour l'instant, on ne fait qu'appeler le template
 
         $em = $this->getDoctrine()->getManager();
-        $listAdverts = $em->getRepository('OCPlatformBundle:Advert')->findAll();
+        $listAdverts = $em->getRepository('OCPlatformBundle:Advert')
+                          ->getAdverts($page, $this->getParameter('nbPerPageIndex'));
+        $pages = (int) round($listAdverts->count() / $this->getParameter('nbPerPageIndex'));
 
         // Et modifiez le 2nd argument pour injecter notre liste
         return $this->render('OCPlatformBundle:Advert:index.html.twig', array(
-            'listAdverts' => $listAdverts
+            'listAdverts' => $listAdverts,
+            'nbPerPage' => $this->getParameter('nbPerPageIndex'),
+            'pages' => $pages,
+            'currentPage'=> $page
         ));
     }
 
@@ -84,6 +89,8 @@ class AdvertController extends Controller
             'listAdverts' => $listAdverts
         ));
     }
+
+
     public function addAction(Request $request)
     {
         // La gestion d'un formulaire est particulière, mais l'idée est la suivante :
