@@ -3,12 +3,14 @@
 {# Ce template n'hérite de personne,
    tout comme le template inclus avec {{ include() }}. #}
 
-<ul class="nav nav-pills nav-stacked">
+
+<div class="list-group">
     {% for advert in listAdverts %}
-        <li>
-            <a href="{{ path('oc_platform_view', {'id': advert.id}) }}">
-                {{ advert.titre }}
-            </a>
-        </li>
+        <a href="{{ path('oc_platform_view', {'id': advert.id}) }}" class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1"> {{ advert.titre }}</h6>
+                <small> {{ advert.date | date("m/d/Y") }}</small>
+            </div>
+        </a>
     {% endfor %}
-</ul>
+</div>

@@ -10,7 +10,9 @@
 
     {% block stylesheets %}
         {# On charge le CSS de bootstrap depuis le site directement #}
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        {#<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">#}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
     {% endblock %}
 </head>
 
@@ -32,10 +34,24 @@
     <div class="row">
         <div id="menu" class="col-md-3">
             <h3>Les annonces</h3>
-            <ul class="nav nav-pills nav-stacked">
-                <li><a href="{{ path('oc_platform_home') }}">Accueil</a></li>
-                <li><a href="{{ path('oc_platform_add') }}">Ajouter une annonce</a></li>
-            </ul>
+            <div class="bootstrap-vertical-nav">
+
+                <button class="btn btn-primary hidden-md-up" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="">Menu</span>
+                </button>
+
+                <div>
+                    <ul class="nav flex-column" id="exCollapsingNavbar3">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('oc_platform_home') }}">Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('oc_platform_add') }}">Ajouter une annonce</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
 
             <h4>Dernières annonces</h4>
             {{ render(controller("OCPlatformBundle:Advert:menu", {'limits': 3})) }}
@@ -57,6 +73,7 @@
     {# Ajoutez ces lignes JavaScript si vous comptez vous servir des fonctionnalités du bootstrap Twitter #}
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="{{ asset('js/script.js')}}"></script>
 {% endblock %}
 
 </body>

@@ -85,7 +85,7 @@ class Advert
     private $nbApplications = 0;
 
     /**
-     * @ORM\ManyToMany(targetEntity="OC\PlatformBundle\Entity\Category")
+     * @ORM\ManyToMany(targetEntity="OC\PlatformBundle\Entity\Category", cascade={"persist"})
      */
     private $categories;
 
