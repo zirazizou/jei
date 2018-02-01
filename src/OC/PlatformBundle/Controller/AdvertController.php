@@ -8,6 +8,7 @@ use OC\PlatformBundle\Entity\Advert;
 use OC\PlatformBundle\Entity\AdvertSkill;
 use OC\PlatformBundle\Entity\Application;
 use OC\PlatformBundle\Entity\Image;
+use OC\PlatformBundle\Form\AdvertType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -104,13 +105,7 @@ class AdvertController extends Controller
 
         // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
         $advert = new Advert();
-        $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $advert);
-        $formBuilder->add('date', DateType::class)
-            ->add('titre', TextType::class)
-            ->add('content', TextareaType::class)
-            ->add('author', TextType::class)
-            ->add('published', CheckboxType::class, array('required' => false))
-            ->add('save', SubmitType::class);
+        $formBuilder = $this->get('form.factory')->createBuilder(AdvertType::class, $advert);
         $form = $formBuilder->getform();
 
         if ($request->isMethod('POST')) {

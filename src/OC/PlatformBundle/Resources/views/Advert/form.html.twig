@@ -9,6 +9,29 @@
 {# On laisse vide la vue pour l'instant, on la comblera plus tard
    lorsqu'on saura afficher un formulaire. #}
 <div class="well">
-    {{ form(form) }}
+    {{ form_start(form, {'attr':{'class':'form-horizontal'}}) }}
+
+    {{ form_errors(form) }}
+
+    {{ form_row(form.date) }}
+
+    <div class="form-group">
+        {{ form_label(form.titre, "titre de l'annonce",
+            {'attr':{'class':'col-ms-2 control-label'}}
+        )}}
+
+        <div class="col-ms-10">
+            {{ form_widget(form.titre, {'attr': {'class':'form-control'}}) }}
+        </div>
+    </div>
+
+    {{ form_row(form.author) }}
+    {{ form_row(form.published) }}
+    {{ form_rest(form) }}
+    {{ form_widget(form.save, {'attr': {'class':'btn btn-primary'}}) }}
+
+
+    {{ form_end(form) }}
+
 </div>
 
