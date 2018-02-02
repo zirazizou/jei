@@ -8,6 +8,7 @@ use OC\PlatformBundle\Entity\Advert;
 use OC\PlatformBundle\Entity\AdvertSkill;
 use OC\PlatformBundle\Entity\Application;
 use OC\PlatformBundle\Entity\Image;
+use OC\PlatformBundle\Form\AdvertEditType;
 use OC\PlatformBundle\Form\AdvertType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -105,12 +106,12 @@ class AdvertController extends Controller
 
         // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
         $advert = new Advert();
-        $formBuilder = $this->get('form.factory')->createBuilder(AdvertType::class, $advert);
-        $form = $formBuilder->getform();
+        $form= $this->get('form.factory')->create(AdvertType::class, $advert);
 
-        if ($request->isMethod('POST')) {
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
             // Ici, on s'occupera de la création et de la gestion du formulaire
-            $form->handleRequest($request);
+            ;
 
             if($form->isValid()){
                 $em = $this->getDoctrine()->getManager();
@@ -124,7 +125,6 @@ class AdvertController extends Controller
             return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
         }
 
-
         return $this->render('OCPlatformBundle:Advert:add.html.twig',array(
             "form"=> $form->createView()
         ));
@@ -136,19 +136,21 @@ class AdvertController extends Controller
 
         $advert = $em->getRepository("OCPlatformBundle:Advert")
             ->find($id);
+        $form = $this->createForm(AdvertEditType::class, $advert);
 
         if( Null === $advert){
             throw new NotFoundHttpException("not advert found");
         }
 
-        if ($request->isMethod('POST')) {
+        if ($request->isMethod('POST') &&  $form->handleRequest($request)->isValid()) {
             $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
-
-            return $this->redirectToRoute('oc_platform_view', array('id' => 5));
+            $em->flush();
+            return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
         }
 
         return $this->render('OCPlatformBundle:Advert:edit.html.twig',array(
-            "advert" => $advert
+            "advert"=> $advert,
+            "form" => $form->createView()
         ));
     }
 

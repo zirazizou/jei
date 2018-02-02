@@ -11,6 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AdvertType extends AbstractType
@@ -23,8 +25,8 @@ class AdvertType extends AbstractType
         $builder->add('date', DateType::class)
                 ->add('titre', TextType::class)
                 ->add('content', TextareaType::class)
-                ->add('published', CheckboxType::class)
                 ->add('author', TextType::class)
+                ->add('published', CheckboxType::class)
                 ->add('image', ImageType::class)
                 ->add('categories', CollectionType::class, array(
                     "entry_type"=>CategoryType::class,
@@ -32,6 +34,19 @@ class AdvertType extends AbstractType
                     "allow_delete"=>true
                 ))
                 ->add('save', SubmitType::class);
+
+//        $builder->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event){
+//            $advert = $event->getData();
+//            dump($advert);
+//            die;
+//            if(null == $advert){
+//                return;
+//            }
+//
+//            if(!$advert->getPublished() || null === $advert->getId()){
+//
+//            }
+//        });
 
     }/**
      * {@inheritdoc}
