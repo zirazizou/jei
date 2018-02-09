@@ -11,8 +11,8 @@
 
 
     {% if advert.image is not null %}
-        <div style="">
-            <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}" height="100%;" width="200px" style="padding-right:10px;width-max:200px; ">
+        <div class="imgContainer" style="">
+            <img src="{{ advert.image.webpath }}" alt="{{ advert.image.alt }}" height="100%;" width="200px" style="padding-right:10px; ">
         </div>
     {% endif %}
     <div style="">

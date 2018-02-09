@@ -37,8 +37,7 @@ class AdvertType extends AbstractType
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function(FormEvent $event){
             $advert = $event->getData();
-            dump($advert);
-            die;
+
             if(null == $advert){
                 return;
             }
@@ -60,7 +59,8 @@ class AdvertType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'OC\PlatformBundle\Entity\Advert'
+            'data_class' => 'OC\PlatformBundle\Entity\Advert',
+            'allow_extra_fields' => true
         ));
     }
 

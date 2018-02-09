@@ -5,6 +5,9 @@ namespace OC\PlatformBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+
 /**
  * Advert
  *
@@ -27,6 +30,7 @@ class Advert
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="datetime")
+     * @Assert\DateTime();
      */
     private $date;
 
@@ -34,14 +38,10 @@ class Advert
      * @var string
      *
      * @ORM\Column(name="titre", type="string", length=255)
+     * @Assert\Length(min="10")
      */
     private $titre;
 
-    /**
-     * @Gedmo\Slug(fields={"titre"})
-     * @ORM\Column(name="oc_slug", type="string", length=255, unique=true)
-     */
-    private $slug;
 
 
 
@@ -49,6 +49,7 @@ class Advert
      * @var string
      *
      * @ORM\Column(name="content", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $content;
 
@@ -59,6 +60,7 @@ class Advert
 
     /**
      * @ORM\OneToOne(targetEntity="OC\PlatformBundle\Entity\Image", cascade={"persist"})
+     * @Assert\Valid()
      */
     private $image;
 
@@ -76,6 +78,7 @@ class Advert
      * @var string
      *
      * @ORM\Column(name="author", type="string", length=255)
+     * @Assert\Length(min="2")
      */
     private $author;
 
@@ -88,6 +91,7 @@ class Advert
      * @ORM\ManyToMany(targetEntity="OC\PlatformBundle\Entity\Category", cascade={"persist"})
      */
     private $categories;
+
 
     public function __construct()
     {
@@ -126,6 +130,19 @@ class Advert
         return $this->updatedAt;
     }
 
+    /**
+     * @Assert\Callback()
+     */
+    public function isContentValid(ExecutionContextInterface $context){
+        $forbiddenWords = array('demotivation', 'abandon');
+
+        if(preg_match('#'.implode('|', $forbiddenWords).'#', $this->getContent())){
+        $context->buildViolation('Contenu invalide car il content un mot interdit')
+                ->atPath('content')
+                ->addViolation();
+        }
+    }
+
 
     /**
      * @param mixed $updatedAt
@@ -142,6 +159,7 @@ class Advert
     public function increaseNbApplications(){
         $this->nbApplications++;
     }
+
 
 
 
@@ -225,7 +243,6 @@ class Advert
     {
         $this->image = $image;
     }
-
 
 
 
