@@ -10,6 +10,10 @@ $(document).ready(function(){
         // </div>
     // </div>
     var $container = $("div#oc_platformbundle_advert_categories");
+
+    if(!$container.length){
+        $container = $("div#advert_edit_categories");
+    }
     var index = $container.find(':input').length;
 
     $('#add_category').click(function(e){

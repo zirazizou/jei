@@ -3,12 +3,14 @@
 namespace OC\PlatformBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Image
  *
  * @ORM\Table(name="image")
  * @ORM\Entity(repositoryClass="OC\PlatformBundle\Repository\ImageRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Image
 {
@@ -35,7 +37,77 @@ class Image
      */
     private $alt;
 
+    //temporary attribute for keeping the name of file to delete
+    private $tempFileName;
 
+
+    private $file;
+
+    /**
+     * @ORM\PostPersist()
+     * @ORM\PostUpdate()
+     */
+    public function upload(){
+
+        if(null == $this->file){
+            return;
+        }
+
+        if(null !== $this->tempFileName){
+            $oldFile = $this->getUploadRootDir().'/'.$this->id.'.'.$this->tempFileName;
+            if(file_exists($oldFile)){
+                unlink($oldFile);
+            }
+        }
+
+        $this->file->move(
+          $this->getUploadRootDir(),
+          $this->id.'.'.$this->url
+        );
+    }
+
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function preUpload(){
+
+        if(null === $this->file){
+            return;
+        }
+
+        $this->url = $this->file->guessExtension();
+        $this->alt = $this->file->getClientOriginalName();
+    }
+
+    /**
+     * @ORM\PreRemove()
+     */
+    public function preRemoveUpload(){
+        $this->tempFileName = $this->getUploadRootDir().'/'.$this->id.'.'.$this->url;
+    }
+
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload(){
+        if(file_exists($this->tempFileName)){
+            unlink($this->tempFileName);
+        }
+    }
+
+    public function getWebPath(){
+        return $this->getUploadDir().'/'.$this->getId().'.'.$this->getUrl();
+    }
+
+
+    public function getUploadDir(){
+        return '/uploads/img';
+    }
+
+    public function getUploadRootDir(){
+        return __DIR__.'/../../../../web/'.$this->getUploadDir();
+    }
     /**
      * Get id
      *
@@ -59,6 +131,32 @@ class Image
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    /**
+     * @param mixed $file
+     */
+    public function setFile(UploadedFile $file = null)
+    {
+        $this->file = $file;
+
+        if(null !== $this->url){
+            $this->tempFileName = $this->url;
+
+            $this->url = null;
+            $this->alt = null;
+        }
+
+
+    }
+
 
     /**
      * Get url

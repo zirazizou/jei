@@ -19,4 +19,8 @@ class ApplicationRepository extends \Doctrine\ORM\EntityRepository
         return $db->getQuery()->getResult();
 
     }
+
+    public function getLikeQueryBuilder($pattern){
+
+    }
 }

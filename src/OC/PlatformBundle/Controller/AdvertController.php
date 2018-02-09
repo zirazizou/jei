@@ -8,8 +8,11 @@ use OC\PlatformBundle\Entity\Advert;
 use OC\PlatformBundle\Entity\AdvertSkill;
 use OC\PlatformBundle\Entity\Application;
 use OC\PlatformBundle\Entity\Image;
+use OC\PlatformBundle\Form\AdvertEditType;
 use OC\PlatformBundle\Form\AdvertType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -27,15 +30,12 @@ class AdvertController extends Controller
         // On ne sait pas combien de pages il y a
         // Mais on sait qu'une page doit être supérieure ou égale à 1
 
-
         if ($page < 1) {
             // On déclenche une exception NotFoundHttpException, cela va afficher
             // une page d'erreur 404 (qu'on pourra personnaliser plus tard d'ailleurs)
             throw new NotFoundHttpException('Page "'.$page.'" inexistante.');
         }
-
         // Ici, on récupérera la liste des annonces, puis on la passera au template
-
         // Mais pour l'instant, on ne fait qu'appeler le template
 
         $em = $this->getDoctrine()->getManager();
@@ -99,18 +99,28 @@ class AdvertController extends Controller
     }
 
 
+    /**
+     * @Security("has_role('ROLE_AUTEUR')")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function addAction(Request $request)
     {
         // La gestion d'un formulaire est particulière, mais l'idée est la suivante :
 
-        // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
-        $advert = new Advert();
-        $formBuilder = $this->get('form.factory')->createBuilder(AdvertType::class, $advert);
-        $form = $formBuilder->getform();
+        // Si la requête est en POST, c'est que le visiteur a soumis le formulair
 
-        if ($request->isMethod('POST')) {
+        if(!$this->get('security.authorization_checker')->isGranted('ROLE_AUTEUR')){
+            throw new AccessDeniedException('acces limite aux auteurs');
+        }
+
+        $advert = new Advert();
+        $form= $this->get('form.factory')->create(AdvertType::class, $advert);
+
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
             // Ici, on s'occupera de la création et de la gestion du formulaire
-            $form->handleRequest($request);
+            ;
 
             if($form->isValid()){
                 $em = $this->getDoctrine()->getManager();
@@ -124,35 +134,45 @@ class AdvertController extends Controller
             return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
         }
 
-
         return $this->render('OCPlatformBundle:Advert:add.html.twig',array(
             "form"=> $form->createView()
         ));
     }
 
+    /**
+     * @Security("has_role('ROLE_MODERATEUR')")
+     * @param $id
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     *
+     */
     public function editAction($id, Request $request)
     {
+
+
         $em = $this->getDoctrine()->getManager();
 
         $advert = $em->getRepository("OCPlatformBundle:Advert")
             ->find($id);
+        $form = $this->createForm(AdvertEditType::class, $advert);
 
         if( Null === $advert){
             throw new NotFoundHttpException("not advert found");
         }
 
-        if ($request->isMethod('POST')) {
+        if ($request->isMethod('POST') &&  $form->handleRequest($request)->isValid()) {
             $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
-
-            return $this->redirectToRoute('oc_platform_view', array('id' => 5));
+            $em->flush();
+            return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
         }
 
         return $this->render('OCPlatformBundle:Advert:edit.html.twig',array(
-            "advert" => $advert
+            "advert"=> $advert,
+            "form" => $form->createView()
         ));
     }
 
-    public function deleteAction($id)
+    public function deleteAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -163,13 +183,25 @@ class AdvertController extends Controller
             throw new NotFoundHttpException("not advert found");
         }
 
-        foreach($advert->getCategories() as $value){
-            $advert->removeCategory($value);
-        }
-        $em->remove($advert);
-        $em->flush();
+        $form = $this->get('form.factory')->create();
 
-        return $this->render('OCPlatformBundle:Advert:delete.html.twig');
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            foreach($advert->getCategories() as $value){
+                $advert->removeCategory($value);
+            }
+            $em->remove($advert);
+            $em->flush();
+
+            $request->getSession()->getFlashBag()->add('info', "L'annonce a bien été supprimée.");
+
+            return $this->redirectToRoute('oc_platform_home');
+        }
+
+
+
+        return $this->render('OCPlatformBundle:Advert:delete.html.twig',
+            array('advert'=>$advert,
+                  'form'  =>$form->createView()));
     }
 
 }
