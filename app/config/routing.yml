@@ -1,3 +1,7 @@
+jei_big_brother:
+    resource: "@JEIBigBrotherBundle/Resources/config/routing.yml"
+    prefix:   /
+
 
 
 oc_platform:

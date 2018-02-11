@@ -1,0 +1,16 @@
+services:
+#    jei_big_brother.example:
+#        class: JEI\BigBrotherBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
+    jei_bigbrother.message_notificator:
+        class: JEI\BigBrotherBundle\Service\MessageNotificator
+        arguments:
+            - "@mailer"
+
+    jei_bigbrother.message_listener:
+        class: JEI\BigBrotherBundle\Event\MessageListener
+        arguments:
+            - "@jei_bigbrother.message_notificator"
+            - ["alexandre", "marine", "pierre", "aminziraoui"]
+        tags:
+            - { name: kernel.event_listener, event: jei_bigbrother.post_message, method: processMessage}

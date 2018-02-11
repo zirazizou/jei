@@ -4,6 +4,8 @@
 
 namespace OC\PlatformBundle\Controller;
 
+use JEI\BigBrotherBundle\Event\MessageEvents;
+use JEI\BigBrotherBundle\Event\MessagePostEvent;
 use OC\PlatformBundle\Entity\Advert;
 use OC\PlatformBundle\Entity\AdvertSkill;
 use OC\PlatformBundle\Entity\Application;
@@ -123,7 +125,11 @@ class AdvertController extends Controller
             ;
 
             if($form->isValid()){
+                $event = new MessagePostEvent($advert->getContent(), $this->getUser());
+                $this->get('event_dispatcher')->dispatch(MessageEvents::POST_MESSAGE, $event);
                 $em = $this->getDoctrine()->getManager();
+                $advert->setContent($event->getMessage());
+                $advert->setUser($this->getUser());
                 $em->persist($advert);
                 $em->flush();
             }

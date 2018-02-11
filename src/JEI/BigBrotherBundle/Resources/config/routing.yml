@@ -1,0 +1,3 @@
+jei_big_brother_homepage:
+    path:     /
+    defaults: { _controller: JEIBigBrotherBundle:Default:index }

@@ -92,6 +92,12 @@ class Advert
      */
     private $categories;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="OC\UserBundle\Entity\User")
+     * @Assert\Valid()
+     */
+    private $user;
+
 
     public function __construct()
     {
@@ -178,6 +184,23 @@ class Advert
     {
         $this->applications = $applications;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param mixed $user
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
 
     /**
      * @param Application $application
